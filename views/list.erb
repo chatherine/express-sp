@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" href="favicon.ico">
+  <title>Express</title>
+  <meta name="description" content="緯度経度から最寄り駅を表示させるサイトです。">
+  <meta property="og:image" content="https://express-ユーザー名.c9.io/logo.png">
+  <style>
+    .allStation{
+      display: inline-block;
+    }
+    .line{
+      display: inline-block;
+    }
+    .next{
+      display: inline-block;
+    }
+    .prev{
+      display: inline-block;
+    }
+  </style>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+</head>
+<body>
+  <script>
+    window.onload = function() {
+      $(".station").click(function() {
+        //thisを指定しないと，配列に入っている路線名すべてが出力された．
+        //thisを入れることによって配列の中のクリックしたものを一意に表示できる
+        var line = $(".line",this).text();
+        var name = $(".name",this).text();
+        //駅をクリックしないと何も起こらない...
+        $.ajax( "/api/station", {
+          type: "GET",
+          data: {"line": line, "name": name},
+          datatype: 'json'
+        })
+        .done(function(json) {
+          $("#detail .line").text(json["line"])
+          $("#detail .next").text(json["next"])
+          $("#detail .prev").text(json["prev"])
+          $("#detail .distance").text(json["distance"])
+          console.log("json!");
+          if (json["next"] == null){
+            $("#detail .next").text("終点です")
+          }
+          if (json["prev"] == null){
+            $("#detail .prev").text("始点です")
+          }
+        });
+      });
+    }
+</script>
+  <div class="allStation">
+    <h1>最寄駅</h1>
+    <h2>近い</h2>
+    <table>
+      <% @stations.each do |station| %>
+        <% if station["distance"].to_i <= 1000 %>
+          <tr class="station">
+            <td class="line"><%= station["line"] %></td>
+            <td class="name"><%= station["name"] %></td>
+            <td class="distance"><%= station["distance"] %></td>
+          </tr>
+        <% end %>
+      <% end %>
+    </table>
+    <h2>遠い</h2>
+    <table>
+      <% @stations.each do |station| %>
+        <% if station["distance"].to_i > 1000 %>
+          <tr class="station">
+            <td class="line"><%= station["line"] %></td>
+            <td class="name"><%= station["name"] %></td>
+            <td class="distance"><%= station["distance"] %></td>
+          </tr>
+        <% end %>
+      <% end %>
+    </table>
+      <!-- each do では，この最後のendのときに出力しているのではないか？-->
+    
+  </div>
+  <div id="detail">
+    <h1>次の駅</h1>
+    <div class="line"></div>&nbsp;<div class="next"></div>&nbsp;
+    <h1>前の駅</h1>
+    <div class="line"></div>&nbsp;<div class="prev"></div>&nbsp;
+  </div>
+  
+  <table>
+    <% @histories.each do |history| %>
+      <!-- each do でデータベース探索をすると，最新のデータベースから順番に回る -->
+      <tr>
+        <td>
+          <% if (history.x.to_f == @x.to_f) && (history.y.to_f == @y.to_f) %>
+            <!-- string型とfloat型で比べていると，合致していなくてもお気に入りボタンが出る -->
+            <% if history.favorite %>
+              <form action="<%= history.id %>/update" method="post">
+                <input type="submit" value="解除">
+               </form>
+               <% break %>
+            <% else %>
+              <form action="<%= history.id %>/update" method="post">
+                <input type="text" name="favComment" id="favComment" placeholder="comment">
+                <input type="submit" value="お気に入り">
+              </form>
+              <% break %>
+            <% end %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+</body>
+</html>
