@@ -2,15 +2,7 @@
 <html lang="ja">
     <head>
         <meta charset="UTF-8">
-        <link rel="shortcut icon" href="favicon.ico" type="views/favicon.ico">
         <title>Express</title>
-        <meta name="description" content="緯度経度から最寄り駅を表示させるサイトです。">
-        <meta property="og:image" content="自分のものに変えてください！">
-        <meta name="twitter:card" content="緯度経度から最寄り駅を表示させるサイトです。" />
-        <meta name="twitter:site" content="自分のものに変えてください！" />
-        <meta name="twitter:title" content="Express" />
-        <meta name="twitter:description" content="緯度経度から最寄り駅を表示させるサイトです。" />
-        <meta name="twitter:image" content="自分のものに変えてください！" />
     </head>
     <body>
         <form action="list" method="get">
@@ -18,41 +10,6 @@
             <input type="text" name="y" id="y" placeholder="y">
             <input type="submit" value="検索">
         </form>
-        <h2>検索履歴</h2>
-        <table>
-            <% @histories.each do |history| %>
-                <tr>
-                    <td><a href="https://geoapp-for-ajax-chatherine.c9users.io/list?x=<%= history.x %>&y=<%= history.y %>"><%= history.x %>,<%= history.y %></a></td>
-                    <td>
-                        <% if history.favorite %>
-                            <form action="<%= history.id %>/update" method="post">
-                                <input type="submit" value="解除">
-                            </form>
-                        <% else %>
-                            <form action="<%= history.id %>/update" method="post">
-                                <input type="text" name="favComment" id="favComment" placeholder="comment">
-                                <input type="submit" value="お気に入り">
-                            </form>
-                        <% end %>
-                    </td>
-                    <td>
-                        <form action="<%= history.id %>/delete" method="post">
-                            <input type="submit" value="[x]">
-                        </form>
-                    </td>
-                </tr>
-            <% end %>
-        </table>
-        <h2>お気に入り</h2>
-        <ul>
-            <% @favorites.each do |favorite| %>
-                <li><a href="https://geoapp-for-ajax-chatherine.c9users.io/list?x=<%= favorite.x %>&y=<%= favorite.y %>"><%= favorite.x %>,<%= favorite.y %></a>&nbsp;&nbsp;<%= favorite.comment %></li>
-            <% end %>
-            <!-- 空のデータベースを表示しようとすると＃が出る -->
-            <% if @favorites.empty? %>
-                <p>お気に入りが空です</p>
-            <% end %>
-            <!-- migrateファイルにミスがあったときは，dbとschemaを削除してrakedb:migrateをやりなおす-->
-        </ul>
+
     </body>
 </html>

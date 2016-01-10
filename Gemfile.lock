@@ -21,7 +21,6 @@ GEM
     json (1.8.3)
     minitest (5.8.3)
     multi_json (1.11.2)
-    pg (0.18.4)
     rack (1.6.4)
     rack-protection (1.5.3)
       rack
@@ -52,7 +51,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  pg
   rake
   sinatra
   sinatra-activerecord
